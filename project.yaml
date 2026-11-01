@@ -2,10 +2,10 @@
 schema: "1"
 
 
-title: " PeerLend: A Peer-to-Peer Lending and Loan Management App"
+title: "PeerLend: A Peer-to-Peer Lending and Loan Management App"
 
 
-summary: "PeerLend is a mobile peer-to-peer lending platform that connects borrowers and lenders, tracks custom repayment terms, and features an AI assistant to simplify loan calculations"
+summary: "An app that helps borrowers and lenders directly manage custom peer-to-peer loans so that they can easily track repayment terms and simplify complex calculations with an AI assistant."
 
 members:
   - name: "Nolawi Assefa"              
