@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() => runApp(const PeerLendApp());
+import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
 
-class PeerLendApp extends StatelessWidget {
+void main() => runApp(const ProviderScope(child: PeerLendApp()));
+
+class PeerLendApp extends ConsumerWidget {
   const PeerLendApp({super.key});
-
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
     title: 'PeerLend',
-    theme: ThemeData(colorSchemeSeed: const Color(0xFF176B58)),
-    home: const Scaffold(body: Center(child: Text('PeerLend'))),
+    debugShowCheckedModeBanner: false,
+    theme: buildTheme(),
+    routerConfig: ref.watch(routerProvider),
   );
 }
