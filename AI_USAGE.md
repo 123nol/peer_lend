@@ -36,9 +36,9 @@ The file lists below are draft review areas for each member to check before sign
 
 | Name | I wrote or reviewed and can explain these files | I entered no passwords, keys or personal data into an AI tool (yes / no) | Signature |
 |---|---|---|---|
-| Nolawi Assefa | Requests and loans in `lib/features/requests/` and `lib/features/loans/`, including the overdue-date fix, plus `test/providers/workflow_test.dart`. |no | |
+| Nolawi Assefa | Requests and loans in `lib/features/requests/` and `lib/features/loans/`, including the overdue-date fix, plus `test/providers/workflow_test.dart`. |no |Nolawi Assefa |
 | Sitotaw Ashagre | App startup, routing, theme, shared widgets and demo state in `lib/main.dart` and `lib/core/`, authentication in `lib/features/auth/`, and the startup and navigation tests in `test/widget_test.dart` and `test/navigation/`. |no | |
 | Yonas Ayele | Offer screens, controller, models, repository and repayment calculator in `lib/features/offers/`, plus repayment records and their repository in `lib/features/repayments/domain/` and `lib/features/repayments/data/`. |no | |
 | Yonatan Getachew | Settings and simulated explanations in `lib/features/settings/` and `lib/features/explanations/`, the repayment form and controller in `lib/features/repayments/presentation/`, and the domain tests in `test/domain/repayment_calculator_test.dart`. |no | |
 
-**Date signed** ____________________
+**Date signed** 11/27/2026
