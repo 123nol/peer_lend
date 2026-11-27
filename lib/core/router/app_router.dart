@@ -9,7 +9,9 @@ import '../../features/offers/presentation/offer_list_screen.dart';
 import '../../features/repayments/presentation/repayment_form_screen.dart';
 import '../../features/requests/presentation/requests_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../providers/demo_mode.dart';
 import '../widgets/ui.dart';
+import 'auth_routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -19,27 +21,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final signedIn = ref.read(authProvider) != null;
-      final authRoute = [
-        '/sign-in',
-        '/register',
-        '/recovery',
-      ].contains(state.uri.path);
+      final authRoute = AuthRoute.matches(state.uri.path);
       if (!signedIn && !authRoute) {
-        return '/sign-in?from=${Uri.encodeComponent(state.uri.toString())}';
+        return AuthRoute.signIn.location(returnTo: state.uri.toString());
       }
       if (signedIn && authRoute) {
-        final from = state.uri.queryParameters['from'];
-        if (from != null &&
-            from.startsWith('/') &&
-            !from.startsWith('//') &&
-            ![
-              '/sign-in',
-              '/register',
-              '/recovery',
-            ].contains(Uri.parse(from).path)) {
-          return from;
-        }
-        return '/home';
+        return safeAuthReturnTo(state.uri.queryParameters['from']) ?? '/home';
       }
       if (state.uri.path == '/') return '/home';
       return null;
@@ -59,12 +46,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ),
     routes: [
-      GoRoute(path: '/sign-in', builder: (_, _) => const AuthScreen()),
       GoRoute(
-        path: '/register',
+        path: AuthRoute.signIn.path,
+        builder: (_, _) => const AuthScreen(),
+      ),
+      GoRoute(
+        path: AuthRoute.register.path,
         builder: (_, _) => const AuthScreen(register: true),
       ),
-      GoRoute(path: '/recovery', builder: (_, _) => const RecoveryScreen()),
+      GoRoute(
+        path: AuthRoute.recovery.path,
+        builder: (_, _) => const RecoveryScreen(),
+      ),
       ShellRoute(
         builder: (context, state, child) =>
             AppShell(location: state.uri.path, child: child),
@@ -123,7 +116,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
-class AppShell extends StatelessWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.location, required this.child});
   final String location;
   final Widget child;
@@ -136,7 +129,7 @@ class AppShell extends StatelessWidget {
     Icons.tune,
   ];
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final index = location.startsWith('/offers')
         ? 1
         : location.startsWith('/requests')
@@ -145,6 +138,7 @@ class AppShell extends StatelessWidget {
         ? 3
         : 0;
     final wide = MediaQuery.sizeOf(context).width >= 800;
+    final demoMode = ref.watch(demoModeProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -167,7 +161,9 @@ class AppShell extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: StatusPill(wide ? 'CLASSROOM DEMO' : 'DEMO'),
+            child: demoMode == DemoMode.normal
+                ? StatusPill(wide ? 'CLASSROOM DEMO' : 'DEMO')
+                : StatusPill('Demo: ${demoMode.name}', emphasized: true),
           ),
         ],
       ),
