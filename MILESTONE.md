@@ -2,8 +2,7 @@
 
 **Prepared:** 26 November 2026
 **Branch:** `feature/m1-screens-navigation`
-**Implementation/test commit:** `d735a8819a5d7124fd8e669f5893bb1d9f4ad910`
-**Submission status:** Not tagged. Group review and standard-runner verification remain pending.
+**Submission status:** Both required checks passed in a development run. Group review and verification of the final submission commit remain pending.
 
 ## Done
 
@@ -13,14 +12,14 @@
 - Riverpod owns application state; Freezed models and in-memory repositories sit behind interfaces.
 - Fictional accounts support offer creation/editing, requests, lender approval, borrower confirmation, loan schedules, repayment recording and confirmation, settings, and explanation consent.
 - Demo controls expose loading, empty, error and offline views. Offline mode blocks financial changes while retaining readable records.
-- 31 meaningful unit/widget tests are included. The analyzer is clean and all 31 tests pass through the direct headless Flutter engine.
+- Loan Detail marks an unpaid instalment overdue only after its local due date has passed. A regression test covers yesterday, today, and tomorrow.
+- The analyzer reported no issues, and all 32 unit and widget tests passed with the standard Flutter test runner.
 
 ## Not done / outside this milestone
 
 - Persistence, real authentication, REST, Firebase and server-side atomic transactions are not implemented.
 - Camera/photo capture, email recovery, notifications and AI service calls are simulated or described in the UI.
 - Android/iOS device builds and manual device acceptance are not claimed.
-- The normal `flutter test` runner cannot start in this sandbox because localhost socket binding is denied; passing standard output must be captured on a normal development machine before submission.
 - Team PR authorship/reviews, instructor/TA access for a private repository, proposal approval/change status and oral checks still require group confirmation.
 - No `m1` tag has been created or pushed. The existing `proposal` tag has been preserved.
 
@@ -37,16 +36,16 @@ Fill these with real links after authorship/review occurs; this document does no
 
 ## Provisional self-score before tagging
 
-This conservative draft scores completed evidence only; revise it after the remaining group work and standard checks.
+This draft scores the evidence recorded so far. Revise it after group review and verification of the final submission commit.
 
 | Criterion | Self-score | Evidence |
 |---|---:|---|
 | All proposed screens present and navigable | 3/3 | The route table in README covers every proposal screen group and widget tests visit each route. |
 | Feature-first structure; state in providers | 2/2 | Seven features have domain/data/presentation layers, repository interfaces, Freezed models and Riverpod-owned application state. |
-| Tests and clean analyzer/test output | 0/1 pending | Analyzer and 31 headless tests pass, but the required standard `flutter test` output is blocked by this environment. |
+| Tests and clean analyzer/test output | 1/1 | The analyzer reported no issues and the standard Flutter test runner passed all 32 tests in the development run documented below. |
 | Repository hygiene | 0/1 pending | A dedicated branch has progressive descriptive commits, but group-authored/reviewed PR evidence has not yet been recorded. |
 | Individual oral checks | 0/3 pending | Oral checks have not occurred and must be recorded individually by the instructor. |
-| **Total currently evidenced** | **5/10** | Five additional points depend on completing verification, review evidence and the oral checks. |
+| **Total currently evidenced** | **6/10** | Four additional points depend on repository hygiene evidence and the individual oral checks. |
 
 ## One change before Milestone 2
 
@@ -54,95 +53,78 @@ Replace the fake authentication and in-memory repositories with authenticated pe
 
 ## Verification evidence
 
-Toolchain: Flutter 3.47.7, Dart 3.13.5. These are development results for the implementation commit above, not a claim of checks on a final `m1` tag. A temporary writable copy of the installed SDK was used because the installed SDK directory is read-only in this sandbox.
+The following output is from a development run. Verify the final submission commit before tagging it `m1`.
 
-### Analyzer — passed
+### Analyzer passed
 
-Command: `flutter analyze --fatal-infos` (SDK version checking suppressed in the sandbox).
-
-```text
-Analyzing peer_lend...
-No issues found! (ran in 13.6s)
-```
-
-### Standard test runner — blocked by environment
-
-Command: `flutter test --reporter expanded` (SDK version checking suppressed in the sandbox). The suite compiles, but the runner cannot bind its local communication socket. Actual output:
+Command `flutter analyze --fatal-infos`
 
 ```text
-00:00 +0: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/widget_test.dart
-00:00 +0 -1: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/widget_test.dart [E]
-  Failed to load "/home/yonas/Desktop/coding/elective_class/peer_lend/test/widget_test.dart": Failed to create server socket (OS Error: Operation not permitted, errno = 1), address = 127.0.0.1, port = 0
-  dart:io-patch/socket_patch.dart 1248:7                           _NativeSocket.bind
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2195:12                          _RawServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2515:12                          _ServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:_http/http_impl.dart 3479:24                                _HttpServer.bind.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_tester_device.dart 89:15  FlutterTesterTestDevice.start
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_platform.dart 679:51      FlutterPlatform._startTest.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/base/async_guard.dart 108:24           asyncGuard.<fn>
-
-00:00 +0 -2: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/navigation/app_navigation_test.dart [E]
-  Failed to load "/home/yonas/Desktop/coding/elective_class/peer_lend/test/navigation/app_navigation_test.dart": Failed to create server socket (OS Error: Operation not permitted, errno = 1), address = 127.0.0.1, port = 0
-  dart:io-patch/socket_patch.dart 1248:7                           _NativeSocket.bind
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2195:12                          _RawServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2515:12                          _ServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:_http/http_impl.dart 3479:24                                _HttpServer.bind.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_tester_device.dart 89:15  FlutterTesterTestDevice.start
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_platform.dart 679:51      FlutterPlatform._startTest.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/base/async_guard.dart 108:24           asyncGuard.<fn>
-
-00:00 +0 -3: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/domain/repayment_calculator_test.dart [E]
-  Failed to load "/home/yonas/Desktop/coding/elective_class/peer_lend/test/domain/repayment_calculator_test.dart": Failed to create server socket (OS Error: Operation not permitted, errno = 1), address = 127.0.0.1, port = 0
-  dart:io-patch/socket_patch.dart 1248:7                           _NativeSocket.bind
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2195:12                          _RawServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2515:12                          _ServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:_http/http_impl.dart 3479:24                                _HttpServer.bind.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_tester_device.dart 89:15  FlutterTesterTestDevice.start
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_platform.dart 679:51      FlutterPlatform._startTest.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/base/async_guard.dart 108:24           asyncGuard.<fn>
-
-00:00 +0 -4: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/providers/workflow_test.dart [E]
-  Failed to load "/home/yonas/Desktop/coding/elective_class/peer_lend/test/providers/workflow_test.dart": Failed to create server socket (OS Error: Operation not permitted, errno = 1), address = 127.0.0.1, port = 0
-  dart:io-patch/socket_patch.dart 1248:7                           _NativeSocket.bind
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2195:12                          _RawServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:io-patch/socket_patch.dart 2515:12                          _ServerSocket.bind.<fn>
-  ===== asynchronous gap ===========================
-  dart:_http/http_impl.dart 3479:24                                _HttpServer.bind.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_tester_device.dart 89:15  FlutterTesterTestDevice.start
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/test/flutter_platform.dart 679:51      FlutterPlatform._startTest.<fn>
-  ===== asynchronous gap ===========================
-  package:flutter_tools/src/base/async_guard.dart 108:24           asyncGuard.<fn>
-
-00:00 +0 -4: Some tests failed.
-
-Failing tests:
-  /home/yonas/Desktop/coding/elective_class/peer_lend/test/domain/repayment_calculator_test.dart: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/domain/repayment_calculator_test.dart
-  /home/yonas/Desktop/coding/elective_class/peer_lend/test/navigation/app_navigation_test.dart: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/navigation/app_navigation_test.dart
-  /home/yonas/Desktop/coding/elective_class/peer_lend/test/providers/workflow_test.dart: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/providers/workflow_test.dart
-  /home/yonas/Desktop/coding/elective_class/peer_lend/test/widget_test.dart: loading /home/yonas/Desktop/coding/elective_class/peer_lend/test/widget_test.dart
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 96.0.0 (111.0.0 available)
+  analyzer 10.2.0 (14.7.0 available)
+  build 4.0.7 (5.0.0 available)
+  build_config 1.3.3 (1.4.0 available)
+  build_runner 2.15.1 (2.17.1 available)
+  built_collection 5.1.2 (6.0.0 available)
+  cli_util 0.6.0 (0.6.1 available)
+  coverage 1.16.0 (1.16.2 available)
+  dart_style 3.1.7 (3.1.14 available)
+  flutter_riverpod 3.3.1 (3.5.0 available)
+  freezed 3.2.5 (4.0.3 available)
+  go_router 17.5.0 (18.1.4 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  riverpod 3.2.1 (3.5.0 available)
+  source_gen 4.2.4 (4.3.1 available)
+  test 1.31.1 (1.33.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  test_core 0.6.18 (0.6.21 available)
+  vector_math 2.4.0 (2.4.4 available)
+Got dependencies!
+21 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing elective...
+No issues found! (ran in 0.6s)
 ```
+
+### Standard Flutter tests passed
+
+Command `flutter test`
+
+```text
+ _fe_analyzer_shared 96.0.0 (111.0.0 available)
+  analyzer 10.2.0 (14.7.0 available)
+  build 4.0.7 (5.0.0 available)
+  build_config 1.3.3 (1.4.0 available)
+  build_runner 2.15.1 (2.17.1 available)
+  built_collection 5.1.2 (6.0.0 available)
+  cli_util 0.6.0 (0.6.1 available)
+  coverage 1.16.0 (1.16.2 available)
+  dart_style 3.1.7 (3.1.14 available)
+  flutter_riverpod 3.3.1 (3.5.0 available)
+  freezed 3.2.5 (4.0.3 available)
+  go_router 17.5.0 (18.1.4 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  riverpod 3.2.1 (3.5.0 available)
+  source_gen 4.2.4 (4.3.1 available)
+  test 1.31.1 (1.33.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  test_core 0.6.18 (0.6.21 available)
+  vector_math 2.4.0 (2.4.4 available)
+Got dependencies!
+21 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:06 +32: All tests passed!
+```
+
+## Additional development checks
+
+The headless test and web build logs below are from implementation commit `d735a8819a5d7124fd8e669f5893bb1d9f4ad910` using Flutter 3.47.7 and Dart 3.13.5.
 
 ### Direct headless Flutter tests
 
@@ -203,6 +185,6 @@ The build reports an optional Cupertino font-family warning; this app uses Mater
 
 1. Open and review feature PRs; every member must author and review actual work. Add those links above.
 2. Verify any proposal feedback is resolved and private-repository staff access is configured.
-3. Run `flutter analyze --fatal-infos` and `flutter test` on the final implementation, replace the blocked output with passing output, and update the self-score before tagging.
+3. Refresh the passing command output if the implementation changes and finalize the self-score before tagging.
 4. Commit the final evidence document. Run both commands again on that candidate commit, then tag that same commit `m1` and push the tag.
 5. Every member should explain the route tree, provider/repository separation, terms snapshots and repayment confirmation during the oral check.

@@ -207,8 +207,8 @@ return $default(_that.id,_that.dueDate,_that.amountMinor);case _:
 /// @nodoc
 
 
-class _Instalment implements Instalment {
-  const _Instalment({required this.id, required this.dueDate, required this.amountMinor});
+class _Instalment extends Instalment {
+  const _Instalment({required this.id, required this.dueDate, required this.amountMinor}): super._();
   
 
 @override final  String id;

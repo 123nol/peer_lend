@@ -21,6 +21,7 @@ class LoanDetailScreen extends ConsumerWidget {
         .where((r) => r.loanId == loanId)
         .toList();
     final balance = loanBalance(loan, repayments);
+    final today = DateTime.now();
     return PageBody(
       title: 'Every step, in view.',
       subtitle: 'Loan $loanId · ${balance == 0 ? 'Completed' : 'Active'}',
@@ -94,7 +95,7 @@ class LoanDetailScreen extends ConsumerWidget {
                                       ? 'Paid'
                                       : pending
                                       ? 'Awaiting confirmation'
-                                      : item.dueDate.isBefore(DateTime.now())
+                                      : item.isOverdueOn(today)
                                       ? 'Overdue'
                                       : 'Upcoming',
                                 ),

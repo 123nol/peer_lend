@@ -5,11 +5,29 @@ part 'loan.freezed.dart';
 
 @freezed
 abstract class Instalment with _$Instalment {
+  const Instalment._();
+
   const factory Instalment({
     required String id,
     required DateTime dueDate,
     required int amountMinor,
   }) = _Instalment;
+
+  bool isOverdueOn(DateTime referenceDate) {
+    final localDueDate = dueDate.toLocal();
+    final localReferenceDate = referenceDate.toLocal();
+    final dueDay = DateTime(
+      localDueDate.year,
+      localDueDate.month,
+      localDueDate.day,
+    );
+    final referenceDay = DateTime(
+      localReferenceDate.year,
+      localReferenceDate.month,
+      localReferenceDate.day,
+    );
+    return dueDay.isBefore(referenceDay);
+  }
 }
 
 // Classic Freezed syntax lets us defensively copy the schedule at construction.

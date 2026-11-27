@@ -81,6 +81,28 @@ void main() {
     expect(loan.instalments, hasLength(1));
     expect(() => loan.instalments.clear(), throwsUnsupportedError);
   });
+  test('an instalment becomes overdue the day after its due date', () {
+    final todayAtNoon = DateTime(2026, 1, 1, 12);
+    final instalment = Instalment(
+      id: 'one',
+      dueDate: DateTime(2026, 1, 1),
+      amountMinor: 100,
+    );
+
+    expect(
+      instalment
+          .copyWith(dueDate: DateTime(2025, 12, 31))
+          .isOverdueOn(todayAtNoon),
+      isTrue,
+    );
+    expect(instalment.isOverdueOn(todayAtNoon), isFalse);
+    expect(
+      instalment
+          .copyWith(dueDate: DateTime(2026, 1, 2))
+          .isOverdueOn(todayAtNoon),
+      isFalse,
+    );
+  });
   test('repositories expose immutable snapshots and independent instances', () {
     final first = InMemoryOfferRepository();
     final snapshot = first.getAll();
