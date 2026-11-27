@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:peer_lend/core/providers/demo_mode.dart';
 import 'package:peer_lend/core/router/app_router.dart';
+import 'package:peer_lend/core/router/auth_routes.dart';
 import 'package:peer_lend/features/auth/presentation/auth_controller.dart';
 import 'package:peer_lend/features/settings/presentation/preferences_controller.dart';
 import 'package:peer_lend/main.dart';
@@ -91,6 +92,72 @@ void main() {
     expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Every step, in view.'), findsNothing);
   });
+  testWidgets('auth links keep a requested offer through recovery and signup', (
+    tester,
+  ) async {
+    final container = await start(tester, signedIn: false);
+    final router = container.read(routerProvider);
+    const destination = '/offers/offer-1?source=demo';
+    router.go(destination);
+    await tester.pumpAndSettle();
+
+    Future<void> tap(String label) async {
+      final control = find.text(label);
+      await tester.ensureVisible(control);
+      await tester.tap(control);
+      await tester.pumpAndSettle();
+    }
+
+    await tap('Forgot password?');
+    expect(find.text('Account recovery'), findsOneWidget);
+    await tap('Back');
+    await tap('Create a demo account');
+    expect(find.text('Create your demo account'), findsOneWidget);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'Demo tester');
+    await tester.enterText(fields.at(1), 'tester@demo.test');
+    await tester.enterText(fields.at(2), 'demopass123');
+    await tap('Create account');
+
+    expect(find.text('A closer look.'), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.toString(), destination);
+  });
+
+  testWidgets('direct recovery link keeps the destination with no back stack', (
+    tester,
+  ) async {
+    final container = await start(tester, signedIn: false);
+    final router = container.read(routerProvider);
+    const destination = '/loans/loan-demo';
+    router.go(AuthRoute.recovery.location(returnTo: destination));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Back'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Continue as Abel'));
+    await tester.tap(find.text('Continue as Abel'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Every step, in view.'), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.path, destination);
+  });
+
+  test('auth return destination excludes external and auth paths', () {
+    for (final target in [
+      'https://example.com/',
+      '//example.com/',
+      '/%2fexample.com/',
+      '/%5cexample.com/',
+      '/recovery/?from=/home',
+      '/offers/%FF',
+    ]) {
+      expect(safeAuthReturnTo(target), isNull, reason: target);
+    }
+    expect(
+      safeAuthReturnTo('/offers/offer-1?source=demo#terms'),
+      '/offers/offer-1?source=demo#terms',
+    );
+  });
+
   testWidgets('register and recovery screens are reachable', (tester) async {
     final container = await start(tester, signedIn: false);
     container.read(routerProvider).go('/register');
@@ -149,6 +216,14 @@ void main() {
     container.read(demoModeProvider.notifier).setMode(DemoMode.offline);
     await tester.pumpAndSettle();
     expect(find.textContaining('Offline preview'), findsOneWidget);
+    expect(find.text('Demo: offline'), findsOneWidget);
+    await tester.tap(find.text('Offers').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Demo: offline'), findsOneWidget);
+    container.read(demoModeProvider.notifier).setMode(DemoMode.normal);
+    await tester.pumpAndSettle();
+    expect(find.text('Demo: offline'), findsNothing);
+    expect(find.text('DEMO'), findsOneWidget);
   });
   testWidgets('explanation is shown only after consent', (tester) async {
     final container = await start(tester);
