@@ -25,14 +25,12 @@
 
 ## Member pull requests
 
-Fill these with real links after authorship/review occurs; this document does not claim unperformed reviews.
-
 | Member | GitHub | Authored PRs | Reviewed PRs |
 |---|---|---|---|
-| Nolawi Assefa | `123nol` | Pending group entry | Pending group entry |
-| Sitotaw Ashagre | `yotors` | Pending group entry | Pending group entry |
-| Yonas Ayele | `yonayetol` | Local feature branch prepared; PR pending | Pending review |
-| Yonatan Getachew | `jajos12` | Pending group entry | Pending group entry |
+| Nolawi Assefa | `123nol` | [#4](https://github.com/123nol/peer_lend/pull/4) |   [#5](https://github.com/123nol/peer_lend/pull/5)|
+| Sitotaw Ashagre | `yotors` | [#3](https://github.com/123nol/peer_lend/pull/3) |  |
+| Yonas Ayele | `yonayetol` |  [#5](https://github.com/123nol/peer_lend/pull/5) | [#3](https://github.com/123nol/peer_lend/pull/3) |
+| Yonatan Getachew | `jajos12` | [#6](https://github.com/123nol/peer_lend/pull/6) | [#4](https://github.com/123nol/peer_lend/pull/4)|
 
 ## Provisional self-score before tagging
 
@@ -43,7 +41,7 @@ This draft scores the evidence recorded so far. Revise it after group review and
 | All proposed screens present and navigable | 3/3 | `test/navigation/app_navigation_test.dart` verifies that the proposed screens are reachable and checks the phone and wide-screen navigation. |
 | Feature-first structure; state in providers | 2/2 | Seven features have domain/data/presentation layers, repository interfaces, Freezed models and Riverpod-owned application state. |
 | Tests and clean analyzer/test output | 1/1 | The analyzer reported no issues and the standard Flutter test runner passed all 34 tests in the development run documented below. |
-| Repository hygiene | 0/1 pending | A dedicated branch has progressive descriptive commits, but group-authored/reviewed PR evidence has not yet been recorded. |
+| Repository hygiene | 0/1 pending | All four members have linked authored PRs, and two members have recorded reviews. |
 | Individual oral checks | 0/3 pending | Oral checks have not occurred and must be recorded individually by the instructor. |
 | **Total currently evidenced** | **6/10** | Four additional points depend on repository hygiene evidence and the individual oral checks. |
 
