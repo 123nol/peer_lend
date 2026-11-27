@@ -214,7 +214,6 @@ class RecoveryScreen extends StatelessWidget {
   );
 }
 
-/// The foundation branch has no lending screens yet.
 class DemoAccountScreen extends ConsumerWidget {
   const DemoAccountScreen({super.key});
 
@@ -227,8 +226,9 @@ class DemoAccountScreen extends ConsumerWidget {
           title: user == null ? 'Demo account' : 'Hello, ${user.displayName}.',
           subtitle: 'You’re signed in to the PeerLend classroom demo.',
           children: [
-            const Panel(
-              child: Text('Lending screens will be added separately.'),
+            FilledButton(
+              onPressed: () => context.go('/offers'),
+              child: const Text('Browse offers'),
             ),
             const SizedBox(height: 24),
             OutlinedButton(

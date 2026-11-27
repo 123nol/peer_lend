@@ -22,6 +22,7 @@ class OfferListScreen extends ConsumerWidget {
       title: 'Find your next step.',
       subtitle:
           'Explore clear terms from your community. All amounts are fictional.',
+      back: '/account',
       children: [
         Wrap(
           spacing: 12,
