@@ -72,4 +72,49 @@ void main() {
     await tap(tester, 'Back');
     expect(find.text('Welcome back'), findsOneWidget);
   });
+
+  testWidgets('signed-out visitors cannot open an offer directly', (
+    tester,
+  ) async {
+    final container = await start(tester);
+    container.read(routerProvider).go('/offers/offer-1');
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.text('A closer look.'), findsNothing);
+  });
+
+  testWidgets('signed-in users can browse, publish, and edit offers', (
+    tester,
+  ) async {
+    await start(tester);
+    await tap(tester, 'Continue as Abel');
+    await tap(tester, 'Browse offers');
+    expect(find.text('Find your next step.'), findsOneWidget);
+
+    final firstOffer = find.text('View offer').first;
+    await tester.ensureVisible(firstOffer);
+    await tester.tap(firstOffer);
+    await tester.pumpAndSettle();
+    expect(find.text('A closer look.'), findsOneWidget);
+    expect(find.text('Total repayment: 1030.00 ETB'), findsOneWidget);
+    expect(find.text('Edit offer'), findsNothing);
+
+    await tap(tester, 'Back');
+    await tap(tester, 'Create offer');
+    expect(find.text('Make an offer.'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).first, '123');
+    await tap(tester, 'Publish offer');
+    expect(find.text('A closer look.'), findsOneWidget);
+    expect(find.text('Total repayment: 123.00 ETB'), findsOneWidget);
+
+    await tap(tester, 'Edit offer');
+    expect(find.text('Edit your offer.'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).first, '150');
+    await tap(tester, 'Save changes');
+    expect(find.text('Total repayment: 150.00 ETB'), findsOneWidget);
+
+    await tap(tester, 'Back');
+    await tap(tester, 'Back');
+    expect(find.text('Hello, Abel.'), findsOneWidget);
+  });
 }
