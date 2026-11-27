@@ -28,7 +28,7 @@
 | Member | GitHub | Authored PRs | Reviewed PRs |
 |---|---|---|---|
 | Nolawi Assefa | `123nol` | [#4](https://github.com/123nol/peer_lend/pull/4) |   [#5](https://github.com/123nol/peer_lend/pull/5)|
-| Sitotaw Ashagre | `yotors` | [#3](https://github.com/123nol/peer_lend/pull/3) |  |
+| Sitotaw Ashagre | `yotors` | [#3](https://github.com/123nol/peer_lend/pull/3) |[#6](https://github.com/123nol/peer_lend/pull/6)  |
 | Yonas Ayele | `yonayetol` |  [#5](https://github.com/123nol/peer_lend/pull/5) | [#3](https://github.com/123nol/peer_lend/pull/3) |
 | Yonatan Getachew | `jajos12` | [#6](https://github.com/123nol/peer_lend/pull/6) | [#4](https://github.com/123nol/peer_lend/pull/4)|
 
