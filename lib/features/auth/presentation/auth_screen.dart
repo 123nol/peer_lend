@@ -1,3 +1,4 @@
+import '../../../core/router/auth_routes.dart';
 import '../../../core/widgets/ui.dart';
 import 'auth_controller.dart';
 
@@ -44,10 +45,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(
+                Icon(
                   Icons.handshake_outlined,
                   size: 48,
-                  color: Color(0xFF176B58),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -129,7 +130,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                         TextButton(
                           onPressed: () => context.go(
-                            widget.register ? '/sign-in' : '/register',
+                            (widget.register
+                                    ? AuthRoute.signIn
+                                    : AuthRoute.register)
+                                .from(GoRouterState.of(context).uri),
                           ),
                           child: Text(
                             widget.register
@@ -139,7 +143,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                         if (!widget.register)
                           TextButton(
-                            onPressed: () => context.push('/recovery'),
+                            onPressed: () => context.push(
+                              AuthRoute.recovery.from(
+                                GoRouterState.of(context).uri,
+                              ),
+                            ),
                             child: const Text('Forgot password?'),
                           ),
                       ],
@@ -201,7 +209,7 @@ class RecoveryScreen extends StatelessWidget {
       child: PageBody(
         title: 'Account recovery',
         subtitle: 'Demo account help',
-        back: '/sign-in',
+        back: AuthRoute.signIn.from(GoRouterState.of(context).uri),
         children: const [
           Panel(
             child: Text(
