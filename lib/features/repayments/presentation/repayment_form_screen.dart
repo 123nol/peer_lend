@@ -1,6 +1,7 @@
 import '../../../core/widgets/ui.dart';
 import '../../loans/presentation/loan_controller.dart';
 import 'repayment_controller.dart';
+import 'repayment_draft_controller.dart';
 
 class RepaymentFormScreen extends ConsumerStatefulWidget {
   const RepaymentFormScreen({super.key, required this.loanId});
@@ -12,22 +13,9 @@ class RepaymentFormScreen extends ConsumerStatefulWidget {
 
 class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
   final _form = GlobalKey<FormState>();
-  final _amount = TextEditingController();
-  final _date = TextEditingController(text: shortDate(DateTime.now()));
-  final _note = TextEditingController();
-  String? _instalmentId;
-  bool _sampleReceipt = false;
-  @override
-  void dispose() {
-    _amount.dispose();
-    _date.dispose();
-    _note.dispose();
-    super.dispose();
-  }
-
-  DateTime? _parsedDate() {
-    final parsed = DateTime.tryParse(_date.text);
-    return parsed != null && shortDate(parsed) == _date.text ? parsed : null;
+  DateTime? _parsedDate(String text) {
+    final parsed = DateTime.tryParse(text);
+    return parsed != null && shortDate(parsed) == text ? parsed : null;
   }
 
   @override
@@ -37,6 +25,9 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
         .where((l) => l.id == widget.loanId)
         .firstOrNull;
     if (loan == null) return const MissingRecord();
+    final provider = repaymentDraftProvider(widget.loanId);
+    final draft = ref.watch(provider);
+    final controller = ref.read(provider.notifier);
     final repayments = ref.watch(repaymentsProvider);
     final available = loan.instalments
         .where(
@@ -47,6 +38,9 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
               i.amountMinor,
         )
         .toList();
+    final selectedId = available.any((item) => item.id == draft.instalmentId)
+        ? draft.instalmentId
+        : null;
     return PageBody(
       title: 'Record a repayment.',
       subtitle: 'The other participant will confirm this record.',
@@ -65,7 +59,7 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   DropdownButtonFormField<String>(
-                    initialValue: _instalmentId,
+                    initialValue: selectedId,
                     isExpanded: true,
                     decoration: const InputDecoration(labelText: 'Instalment'),
                     items: [
@@ -77,14 +71,15 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                           ),
                         ),
                     ],
-                    onChanged: (v) => setState(() {
-                      _instalmentId = v;
-                    }),
-                    validator: (v) => v == null ? 'Choose an instalment' : null,
+                    onChanged: controller.selectInstalment,
+                    validator: (v) => available.any((item) => item.id == v)
+                        ? null
+                        : 'Choose an instalment',
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _amount,
+                    initialValue: draft.amount,
+                    onChanged: controller.setAmount,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -97,14 +92,15 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _date,
+                    initialValue: draft.paymentDate,
+                    onChanged: controller.setPaymentDate,
                     keyboardType: TextInputType.datetime,
                     decoration: const InputDecoration(
                       labelText: 'Payment date',
                       hintText: 'YYYY-MM-DD',
                     ),
-                    validator: (_) {
-                      final date = _parsedDate();
+                    validator: (text) {
+                      final date = _parsedDate(text ?? '');
                       return date == null ||
                               date.isBefore(DateTime(2000)) ||
                               date.isAfter(DateTime.now())
@@ -114,7 +110,8 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _note,
+                    initialValue: draft.note,
+                    onChanged: controller.setNote,
                     maxLines: 3,
                     maxLength: 300,
                     decoration: const InputDecoration(
@@ -128,7 +125,7 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                     'Camera preview is simulated for Milestone 1. You can attach a sample receipt or keep a typed note. No photo is captured or saved.',
                   ),
                   const SizedBox(height: 12),
-                  if (_sampleReceipt)
+                  if (draft.hasDemoReceipt)
                     Container(
                       padding: const EdgeInsets.all(24),
                       color: const Color(0xFFF1F4EA),
@@ -146,16 +143,14 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                     runSpacing: 8,
                     children: [
                       OutlinedButton.icon(
-                        onPressed: () => setState(() {
-                          _sampleReceipt = !_sampleReceipt;
-                        }),
+                        onPressed: controller.toggleDemoReceipt,
                         icon: Icon(
-                          _sampleReceipt
+                          draft.hasDemoReceipt
                               ? Icons.delete_outline
                               : Icons.camera_alt_outlined,
                         ),
                         label: Text(
-                          _sampleReceipt
+                          draft.hasDemoReceipt
                               ? 'Remove sample receipt'
                               : 'Attach sample receipt',
                         ),
@@ -173,16 +168,25 @@ class _RepaymentFormScreenState extends ConsumerState<RepaymentFormScreen> {
                   FilledButton(
                     onPressed: () {
                       if (!_form.currentState!.validate()) return;
+                      final current = ref.read(provider);
+                      final instalmentId = current.instalmentId;
+                      final amount = parseMinor(current.amount);
+                      final date = _parsedDate(current.paymentDate);
+                      if (instalmentId == null ||
+                          amount == null ||
+                          date == null) {
+                        return;
+                      }
                       perform(context, () {
                         ref
                             .read(repaymentsProvider.notifier)
                             .record(
                               loanId: loan.id,
-                              instalmentId: _instalmentId!,
-                              amountMinor: parseMinor(_amount.text)!,
-                              date: _parsedDate()!,
-                              note: _note.text,
-                              hasDemoReceipt: _sampleReceipt,
+                              instalmentId: instalmentId,
+                              amountMinor: amount,
+                              date: date,
+                              note: current.note,
+                              hasDemoReceipt: current.hasDemoReceipt,
                             );
                         context.go('/loans/${loan.id}');
                       }, success: 'Repayment recorded. Awaiting confirmation.');
