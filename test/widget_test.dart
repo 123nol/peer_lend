@@ -37,18 +37,17 @@ void main() {
     await start(tester);
     await tap(tester, 'Continue as Abel');
     expect(find.text('Hello, Abel.'), findsOneWidget);
+    await tap(tester, 'Settings');
     await tap(tester, 'Sign out');
     expect(find.text('Welcome back'), findsOneWidget);
   });
 
-  testWidgets('signed-out visitors cannot open the account directly', (
-    tester,
-  ) async {
+  testWidgets('signed-out visitors cannot open Home directly', (tester) async {
     final container = await start(tester);
-    container.read(routerProvider).go('/account');
+    container.read(routerProvider).go('/home');
     await tester.pumpAndSettle();
     expect(find.text('Welcome back'), findsOneWidget);
-    expect(find.text('Sign out'), findsNothing);
+    expect(find.text('Explore offers'), findsNothing);
   });
 
   testWidgets('a fictional account can be registered and used', (tester) async {
@@ -88,7 +87,7 @@ void main() {
   ) async {
     await start(tester);
     await tap(tester, 'Continue as Abel');
-    await tap(tester, 'Browse offers');
+    await tap(tester, 'Explore offers');
     expect(find.text('Find your next step.'), findsOneWidget);
 
     final firstOffer = find.text('View offer').first;
@@ -114,7 +113,7 @@ void main() {
     expect(find.text('Total repayment: 150.00 ETB'), findsOneWidget);
 
     await tap(tester, 'Back');
-    await tap(tester, 'Back');
+    await tap(tester, 'Home');
     expect(find.text('Hello, Abel.'), findsOneWidget);
   });
 }

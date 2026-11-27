@@ -108,24 +108,31 @@ class SectionTitle extends StatelessWidget {
 }
 
 class StatusPill extends StatelessWidget {
-  const StatusPill(this.label, {super.key});
+  const StatusPill(this.label, {super.key, this.emphasized = false});
   final String label;
+  final bool emphasized;
+
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      color: const Color(0xFFE8F1E8),
-      borderRadius: BorderRadius.circular(30),
-    ),
-    child: Text(
-      label,
-      style: const TextStyle(
-        color: Color(0xFF315C3F),
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: emphasized ? colors.secondaryContainer : const Color(0xFFE8F1E8),
+        borderRadius: BorderRadius.circular(30),
       ),
-    ),
-  );
+      child: Text(
+        label,
+        style: TextStyle(
+          color: emphasized
+              ? colors.onSecondaryContainer
+              : const Color(0xFF315C3F),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
 }
 
 class EmptyMessage extends StatelessWidget {
